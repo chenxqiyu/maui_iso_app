@@ -57,8 +57,7 @@ jobs:
           dotnet publish ${{ env.PROJECT_PATH }} \
             -f net8.0-ios \
             -c Debug \
-            -p:BuildIpa=true \
-            -p:ArchiveOnBuild=true \
+            -p:CreatePackage=true \
             -p:EnableCodeSigning=false
 
       # 准备Payload目录
