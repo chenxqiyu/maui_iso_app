@@ -59,7 +59,7 @@ jobs:
       # 准备IPA文件
       - name: Prepare IPA
         run: |
-          mv bin/Debug/net8.0-ios/ios-arm64/publish/*.ipa MAUIApp.ipa
+          mv bin/Debug/net8.0-ios/ios-arm64/publish/*.ipa MAUIApp_Unsigned.ipa
         working-directory: ${{ github.workspace }}
 
         # 上传未签名的 IPA 文件到 Release
