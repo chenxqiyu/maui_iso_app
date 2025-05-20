@@ -62,39 +62,39 @@ jobs:
       #       -p:ArchiveOnBuild=true \
       #       -p:EnableCodeSigning=false
       
-      # 构建IPA文件
-      - name: Build IPA
-        run: |
-          dotnet publish ${{ env.PROJECT_PATH }} \
-            -f net8.0-ios \
-            -c Debug \
-            -p:ArchiveOnBuild=false \
-            -p:EnableCodeSigning=false \
-            -p:SkipCodesign=true
+      # # 构建IPA文件
+      # - name: Build IPA
+      #   run: |
+      #     dotnet publish ${{ env.PROJECT_PATH }} \
+      #       -f net8.0-ios \
+      #       -c Debug \
+      #       -p:ArchiveOnBuild=false \
+      #       -p:EnableCodeSigning=false \
+      #       -p:SkipCodesign=true
             
-      # 准备Payload目录
-      - name: Prepare Payload directory
-        run: |
-          mkdir -p Payload
-          cp -r bin/Debug/net8.0-ios/ios-arm64/MauiApp12.app Payload/
-        working-directory: ${{ github.workspace }}
+      # # 准备Payload目录
+      # - name: Prepare Payload directory
+      #   run: |
+      #     mkdir -p Payload
+      #     cp -r bin/Debug/net8.0-ios/ios-arm64/MauiApp12.app Payload/
+      #   working-directory: ${{ github.workspace }}
 
-      # 使用ldid进行随机签名
-      - name: Random signing with ldid
-        run: |
-          if command -v ldid &> /dev/null; then
-            echo "Applying random signing with ldid..."
-            ldid -S -M Payload/MauiApp12.app/MauiApp12
-            echo "Random signing completed"
-          else
-            echo "ldid not available, skipping random signing"
-          fi
+      # # 使用ldid进行随机签名
+      # - name: Random signing with ldid
+      #   run: |
+      #     if command -v ldid &> /dev/null; then
+      #       echo "Applying random signing with ldid..."
+      #       ldid -S -M Payload/MauiApp12.app/MauiApp12
+      #       echo "Random signing completed"
+      #     else
+      #       echo "ldid not available, skipping random signing"
+      #     fi
 
-      # 打包IPA文件
-      - name: Package IPA
-        run: |
-          zip -qr MAUIApp_Unsigned.ipa Payload
-          rm -rf Payload
+      # # 打包IPA文件
+      # - name: Package IPA
+      #   run: |
+      #     zip -qr MAUIApp_Unsigned.ipa Payload
+      #     rm -rf Payload
 
 
       # Build APK (unsigned)
@@ -109,20 +109,24 @@ jobs:
       - name: Find APK file
         id: find-apk
         run: |
+          echo "11---------"
+          ls /bin/Debug/net8.0-android/android/bin/
+          echo "22---------"
+          ls /bin/Debug/net8.0-android/android/
           APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | head -n 1)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
           echo "Found APK at: $APK_PATH"
 
           
-        # 上传未签名的 IPA 文件到 Release
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
-          tag: v2.0
-          overwrite: true
-          body: "ipa apk release"
+      #   # 上传未签名的 IPA 文件到 Release
+      # - name: Upload binaries to release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
+      #     tag: v2.0
+      #     overwrite: true
+      #     body: "ipa apk release"
           
         # 上传未签名的 APK 文件到 Release
       - name: Upload binaries to release
@@ -131,5 +135,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.APK_PATH }}
           tag: v2.0
-          overwrite: false
+          overwrite: true
           body: "ipa apk release"
