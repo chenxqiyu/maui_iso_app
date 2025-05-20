@@ -127,9 +127,17 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            ${{ github.workspace }}/MAUIApp_Unsigned.ipa
-            ${{ env.APK_PATH }}
+          file: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
           tag: v1.0
           overwrite: true
-          body: "This is first release"
+          body: "ipa release"
+          
+        # 上传未签名的 APK 文件到 Release
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.APK_PATH }}
+          tag: v1.1
+          overwrite: true
+          body: "apk release"
