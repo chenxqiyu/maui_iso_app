@@ -27,16 +27,16 @@ jobs:
         run: |
           dotnet workload install maui
           dotnet workload install maui-ios
-          dotnet workload install maui-maccatalyst
+          # dotnet workload install maui-maccatalyst
 
       # 恢复项目依赖
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }}
 
       # 更新CocoaPods仓库
-      - name: Update CocoaPods repo
-        run: pod repo update
-        working-directory: ios
+      # - name: Update CocoaPods repo
+      #   run: pod repo update
+      #   working-directory: ios
 
       # 构建IPA文件
       - name: Build IPA
