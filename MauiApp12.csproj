@@ -65,6 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Include=".github\workflows\maui-apk.yml" />
 	  <None Include=".github\workflows\maui-ipa-apk.yml" />
 	  <None Include=".github\workflows\maui-ipa.yml" />
 	</ItemGroup>

@@ -1,0 +1,103 @@
+name: MAUI-iOS-apk-build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: 'MauiApp12.csproj'
+  XCODE_VERSION: '16.1.0'  # 指定需要的Xcode版本
+# │ 0       │ '16.2.0' │ '16C5032a'  │ 'GM'        │ true   │ '/Applications/Xcode_16.2.app'   │
+# │ 1       │ '16.1.0' │ '16B40'     │ 'GM'        │ true   │ '/Applications/Xcode_16.1.app'   │
+# │ 2       │ '15.4.0' │ '15F31d'    │ 'GM'        │ true   │ '/Applications/Xcode_15.4.app'   │
+# │ 3       │ '15.3.0' │ '15E204a'   │ 'GM'        │ true   │ '/Applications/Xcode_15.3.app'   │
+# │ 4       │ '15.2.0' │ '15C500b'   │ 'GM'        │ true   │ '/Applications/Xcode_15.2.app'   │
+# │ 5       │ '15.1.0' │ '15C65'     │ 'GM'        │ true   │ '/Applications/Xcode_15.1.app'   │
+# │ 6       │ '15.0.1' │ '15A507'    │ 'GM'        │ true   │ '/Applications/Xcode_15.0.1.app' │
+jobs:
+  build-ios:
+    name: 🎉 MAUI iOS Build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 设置正确的Xcode版本
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      # 设置.NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # 安装MAUI工作负载
+      - name: Install MAUI workloads
+        run: |
+          dotnet workload install maui
+          dotnet workload install maui-android
+
+      # 恢复项目依赖
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+
+      # Generate debug keystore
+      - name: Generate debug keystore
+        run: |
+          mkdir -p keystore
+          keytool -genkey -v -keystore keystore/debug.keystore \
+            -storepass android -alias androiddebugkey -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          
+      # Build APK (unsigned)
+      - name: Build APK
+        run: |
+          dotnet publish ${{ env.PROJECT_PATH }} \
+            -f net8.0-android \
+            -c Release \
+            -p:AndroidPackageFormat=apk \
+            -p:AndroidSigningKeyPass=android \
+            -p:AndroidSigningStorePass=android \
+            -p:AndroidSigningKeyAlias=androiddebugkey \
+            -p:AndroidSigningStoreType=PKCS12 \
+            -p:AndroidKeyStore=true \
+            -p:AndroidSigningKeyStore=keystore/debug.keystore
+
+      # Find the APK file
+      - name: Find APK file
+        id: find-apk
+        run: |
+          # 查找所有 APK 文件并打印详细信息
+          echo "Searching for APK files in $GITHUB_WORKSPACE and subdirectories..."
+          find $GITHUB_WORKSPACE -name "*.apk" -print -exec ls -lh {} \;
+          
+      - name: Find the SECOND APK file
+        id: find-second-apk
+        run: |
+          # 查找所有 APK 文件，并提取第二个（跳过第一个）
+          APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | sed -n '2p')
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::Could not find the second APK file!"
+            exit 1
+          else
+            echo "Found SECOND APK at: $APK_PATH"
+            echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+          fi
+
+          
+        # 上传未签名的 APK 文件到 Release
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.APK_PATH }}
+          tag: v2.0
+          overwrite: true
+          body: "ipa apk release"
