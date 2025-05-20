@@ -51,6 +51,16 @@ jobs:
           brew install ldid || true
           which ldid || echo "ldid installation failed, continuing without random signing"
 
+      # # 构建IPA文件
+      # - name: Build IPA
+      #   run: |
+      #     dotnet publish ${{ env.PROJECT_PATH }} \
+      #       -f net8.0-ios \
+      #       -c Debug \
+      #       -p:BuildIpa=true \
+      #       -p:ArchiveOnBuild=true \
+      #       -p:EnableCodeSigning=false
+      
       # 构建IPA文件
       - name: Build IPA
         run: |
@@ -58,9 +68,15 @@ jobs:
             -f net8.0-ios \
             -c Debug \
             -p:BuildIpa=true \
-            -p:ArchiveOnBuild=true \
-            -p:EnableCodeSigning=false
-
+            -p:ArchiveOnBuild=false \
+            -p:EnableCodeSigning=false \
+            -p:RuntimeIdentifier=ios-arm64 \
+            -p:MtouchLink=None \
+            -p:PublishTrimmed=false \
+            -p:CreatePackage=true \
+            -p:SuppressAppCenterUpload=true \
+            -p:SkipCodesign=true
+            
       # 准备Payload目录
       - name: Prepare Payload directory
         run: |
