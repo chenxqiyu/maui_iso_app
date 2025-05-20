@@ -1,0 +1,59 @@
+name: MAUI-iOS-ipa-build-unsigned
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '8.0.204'  # 根据你的MAUI版本调整
+  PROJECT_PATH: 'MauiApp12.csproj'  # 你的MAUI项目文件路径
+
+jobs:
+  build-ios:
+    name: 🎉 MAUI iOS Build (Unsigned)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # 设置 .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # 恢复 NuGet 包
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      # 安装 MAUI iOS 工作负载（如果需要）
+      - name: Install MAUI iOS workload
+        run: dotnet workload install maui-ios
+
+      # 更新 CocoaPods 仓库
+      - name: Update CocoaPods repo
+        run: pod repo update
+        working-directory: ios
+
+      # 构建未签名的 IPA 文件
+      - name: Build Unsigned IPA
+        run: |
+          dotnet publish ${{ env.PROJECT_PATH }} \
+            -f net8.0-ios \
+            -c Release \
+            -p:BuildIpa=true \
+            -p:ArchiveOnBuild=true \
+            -p:EnableCodeSigning=false
+
+      # 准备未签名的 IPA 文件
+      - name: Prepare unsigned IPA
+        run: |
+          mv bin/Release/net8.0-ios/ios-arm64/publish/*.ipa MAUIApp_Unsigned.ipa
+        working-directory: ${{ github.workspace }}
+
+      # 上传未签名的 IPA 文件作为构建产物
+      - name: Upload unsigned artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MAUI-iOS-IPA-Unsigned
+          path: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
