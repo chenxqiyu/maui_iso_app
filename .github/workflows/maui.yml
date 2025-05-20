@@ -56,6 +56,24 @@ jobs:
             -p:ArchiveOnBuild=true \
             -p:EnableCodeSigning=false
 
+      # 准备Payload目录
+      - name: Prepare Payload directory
+        run: |
+          mkdir -p Payload
+          cp -r bin/Debug/net8.0-ios/ios-arm64/publish/MauiApp12.app Payload/
+        working-directory: ${{ github.workspace }}
+
+      # 使用ldid进行随机签名
+      - name: Random signing with ldid
+        run: |
+          if command -v ldid &> /dev/null; then
+            echo "Applying random signing with ldid..."
+            ldid -S -M Payload/MauiApp12.app/MauiApp12
+            echo "Random signing completed"
+          else
+            echo "ldid not available, skipping random signing"
+          fi
+
       # 准备IPA文件
       - name: Prepare IPA
         run: |
