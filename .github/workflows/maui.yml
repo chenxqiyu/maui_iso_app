@@ -8,8 +8,14 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
   PROJECT_PATH: 'MauiApp12.csproj'
-  XCODE_VERSION: '16.0'  # 指定需要的Xcode版本
-
+  XCODE_VERSION: '16.1.0'  # 指定需要的Xcode版本
+# │ 0       │ '16.2.0' │ '16C5032a'  │ 'GM'        │ true   │ '/Applications/Xcode_16.2.app'   │
+# │ 1       │ '16.1.0' │ '16B40'     │ 'GM'        │ true   │ '/Applications/Xcode_16.1.app'   │
+# │ 2       │ '15.4.0' │ '15F31d'    │ 'GM'        │ true   │ '/Applications/Xcode_15.4.app'   │
+# │ 3       │ '15.3.0' │ '15E204a'   │ 'GM'        │ true   │ '/Applications/Xcode_15.3.app'   │
+# │ 4       │ '15.2.0' │ '15C500b'   │ 'GM'        │ true   │ '/Applications/Xcode_15.2.app'   │
+# │ 5       │ '15.1.0' │ '15C65'     │ 'GM'        │ true   │ '/Applications/Xcode_15.1.app'   │
+# │ 6       │ '15.0.1' │ '15A507'    │ 'GM'        │ true   │ '/Applications/Xcode_15.0.1.app' │
 jobs:
   build-ios:
     name: 🎉 MAUI iOS Build
