@@ -74,11 +74,11 @@ jobs:
             echo "ldid not available, skipping random signing"
           fi
 
-      # 准备IPA文件
-      - name: Prepare IPA
+      # 打包IPA文件
+      - name: Package IPA
         run: |
-          mv bin/Debug/net8.0-ios/ios-arm64/publish/*.ipa MAUIApp_Unsigned.ipa
-        working-directory: ${{ github.workspace }}
+          zip -qr MAUIApp_Unsigned.ipa Payload
+          rm -rf Payload
 
         # 上传未签名的 IPA 文件到 Release
       - name: Upload binaries to release
