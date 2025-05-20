@@ -124,7 +124,11 @@ jobs:
       - name: Find APK file
         id: find-apk
         run: |
-          APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | head -n 1)
+          # 查找所有 APK 文件并打印详细信息
+          echo "Searching for APK files in $GITHUB_WORKSPACE and subdirectories..."
+          find $GITHUB_WORKSPACE -name "*.apk" -print -exec ls -lh {} \;
+          
+          APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | head -n 2)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
           echo "Found APK at: $APK_PATH"
 
