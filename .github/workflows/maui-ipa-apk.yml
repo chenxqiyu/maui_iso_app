@@ -128,7 +128,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
-          tag: v1.0
+          tag: v1.1
           overwrite: true
           body: "ipa release"
           
@@ -138,6 +138,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.APK_PATH }}
-          tag: v1.1
+          tag: v1.0
           overwrite: true
           body: "apk release"
