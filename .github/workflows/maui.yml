@@ -69,6 +69,7 @@ jobs:
             -c Debug \
             -p:ArchiveOnBuild=false \
             -p:EnableCodeSigning=false \
+            -p:MtouchLink=None \
             -p:PublishTrimmed=false \
             -p:SkipCodesign=true
             
