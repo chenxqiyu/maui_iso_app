@@ -38,7 +38,6 @@ jobs:
       # 安装MAUI工作负载
       - name: Install MAUI workloads
         run: |
-          dotnet workload install maui
           dotnet workload install maui-ios
 
       # 恢复项目依赖
