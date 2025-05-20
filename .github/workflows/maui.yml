@@ -19,7 +19,7 @@ jobs:
 
       # 设置正确的Xcode版本
       - name: Setup Xcode
-        uses: actions/setup-xcode@v3
+        uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
