@@ -6,8 +6,9 @@ on:
     branches: [ main ]
 
 env:
-  DOTNET_VERSION: '8.0.x'  # 使用与项目匹配的.NET版本
+  DOTNET_VERSION: '8.0.x'
   PROJECT_PATH: 'MauiApp12.csproj'
+  XCODE_VERSION: '16.0'  # 指定需要的Xcode版本
 
 jobs:
   build-ios:
@@ -16,27 +17,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 设置正确的.NET SDK版本
+      # 设置正确的Xcode版本
+      - name: Setup Xcode
+        uses: actions/setup-xcode@v3
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      # 设置.NET SDK
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      # 安装必要的MAUI工作负载
+      # 安装MAUI工作负载
       - name: Install MAUI workloads
         run: |
           dotnet workload install maui
           dotnet workload install maui-ios
-          # dotnet workload install maui-maccatalyst
 
       # 恢复项目依赖
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }}
 
-      # 更新CocoaPods仓库
-      # - name: Update CocoaPods repo
-      #   run: pod repo update
-      #   working-directory: ios
 
       # 构建IPA文件
       - name: Build IPA
