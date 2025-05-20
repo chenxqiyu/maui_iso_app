@@ -111,7 +111,7 @@ jobs:
         run: |
           dotnet publish ${{ env.PROJECT_PATH }} \
             -f net8.0-android \
-            -c Debug \
+            -c Release \
             -p:AndroidPackageFormat=apk \
             -p:AndroidSigningKeyPass=android \
             -p:AndroidSigningStorePass=android \
@@ -132,7 +132,7 @@ jobs:
         id: find-second-apk
         run: |
           # 查找所有 APK 文件，并提取第二个（跳过第一个）
-          APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | sed -n '5p')
+          APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | sed -n '2p')
           
           if [ -z "$APK_PATH" ]; then
             echo "::error::Could not find the second APK file!"
