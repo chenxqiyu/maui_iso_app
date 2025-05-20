@@ -51,9 +51,12 @@ jobs:
           mv bin/Release/net8.0-ios/ios-arm64/publish/*.ipa MAUIApp_Unsigned.ipa
         working-directory: ${{ github.workspace }}
 
-      # 上传未签名的 IPA 文件作为构建产物
-      - name: Upload unsigned artifact
-        uses: actions/upload-artifact@v3
+        # 上传未签名的 IPA 文件到 Release
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: MAUI-iOS-IPA-Unsigned
-          path: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ github.workspace }}/MAUIApp_Unsigned.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is first release"
