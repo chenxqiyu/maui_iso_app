@@ -67,14 +67,9 @@ jobs:
           dotnet publish ${{ env.PROJECT_PATH }} \
             -f net8.0-ios \
             -c Debug \
-            -p:BuildIpa=true \
             -p:ArchiveOnBuild=false \
             -p:EnableCodeSigning=false \
-            -p:RuntimeIdentifier=ios-arm64 \
-            -p:MtouchLink=None \
             -p:PublishTrimmed=false \
-            -p:CreatePackage=true \
-            -p:SuppressAppCenterUpload=true \
             -p:SkipCodesign=true
             
       # 准备Payload目录
