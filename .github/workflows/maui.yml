@@ -63,6 +63,8 @@ jobs:
       # 准备Payload目录
       - name: Prepare Payload directory
         run: |
+          ls /Users/runner/work/maui_iso_app/maui_iso_app/bin/Debug/net8.0-ios/ios-arm64/
+          ls /Users/runner/work/maui_iso_app/maui_iso_app/bin/Debug/net8.0-ios/ios-arm64/publish/
           mkdir -p Payload
           cp -r bin/Debug/net8.0-ios/ios-arm64/publish/MauiApp12.app Payload/
         working-directory: ${{ github.workspace }}
