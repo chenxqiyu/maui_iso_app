@@ -45,6 +45,11 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }}
 
+      # 安装ldid工具
+      - name: Install ldid for random signing
+        run: |
+          brew install ldid || true
+          which ldid || echo "ldid installation failed, continuing without random signing"
 
       # 构建IPA文件
       - name: Build IPA
