@@ -97,22 +97,33 @@ jobs:
       #     rm -rf Payload
 
 
+      # Generate debug keystore
+      - name: Generate debug keystore
+        run: |
+          mkdir -p keystore
+          keytool -genkey -v -keystore keystore/debug.keystore \
+            -storepass android -alias androiddebugkey -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          
       # Build APK (unsigned)
       - name: Build APK
         run: |
           dotnet publish ${{ env.PROJECT_PATH }} \
             -f net8.0-android \
             -c Debug \
-            -p:AndroidPackageFormat=apk
+            -p:AndroidPackageFormat=apk \
+            -p:AndroidSigningKeyPass=android \
+            -p:AndroidSigningStorePass=android \
+            -p:AndroidSigningKeyAlias=androiddebugkey \
+            -p:AndroidSigningStoreType=PKCS12 \
+            -p:AndroidKeyStore=true \
+            -p:AndroidSigningKeyStore=keystore/debug.keystore
 
       # Find the APK file
       - name: Find APK file
         id: find-apk
         run: |
-          echo "11---------"
-          ls /bin/Debug/net8.0-android/android/bin/
-          echo "22---------"
-          ls /bin/Debug/net8.0-android/android/
           APK_PATH=$(find ${{ github.workspace }} -name "*.apk" | head -n 1)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
           echo "Found APK at: $APK_PATH"
